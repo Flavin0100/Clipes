@@ -1,0 +1,31 @@
+[project]
+name = "clipador"
+version = "0.1.0"
+description = "Gera cortes verticais (TikTok/Reels/Shorts) automaticamente a partir de lives e vídeos de gameplay"
+requires-python = ">=3.11"
+readme = "README.md"
+dependencies = [
+  "yt-dlp>=2025.1.1",
+  "faster-whisper>=1.1.0",
+  "numpy",
+  "pyyaml",
+  "python-dotenv",
+  "rich",
+]
+
+[project.optional-dependencies]
+# Fase 2: detecção de facecam / crop inteligente
+vision = ["mediapipe", "opencv-python-headless"]
+# Fase 3: chat da Twitch + análise semântica
+ai = ["anthropic", "chat-downloader"]
+dev = ["pytest"]
+
+[project.scripts]
+clipador = "clipador.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["clipador*"]

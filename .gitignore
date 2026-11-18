@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+cache/
+output/
+*.egg-info/
+.pytest_cache/
+assets/fonts/*.ttf
+assets/fonts/*.otf
