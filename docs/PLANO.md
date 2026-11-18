@@ -61,3 +61,26 @@ artefato já existe e pula.
 8. **Score 0–100 com pesos fixos** é um começo, mas os pesos certos dependem do
    streamer. O report vai guardar os sinais brutos de cada clipe, para depois
    ajustarmos os pesos com base em quais clipes performaram.
+
+## Decisões a partir do perfil de uso
+
+Perfil: **Windows, sem GPU (só CPU), lives longas (2 h+) da Twitch, ainda sem
+chave da Anthropic.**
+
+- **Ordem do pipeline para lives longas:** chat da Twitch + picos de áudio
+  primeiro → ~30 janelas candidatas → transcrição só delas
+  (`large-v3-turbo`, `int8`, CPU). Uma live de 4 h vira ~45 min de áudio
+  transcrito, em vez de 4 h.
+- **Chat da Twitch é o sinal principal.** Ele vira peso alto no MVP (antes
+  previsto só para a Fase 3), porque sem GPU e sem Claude é o sinal mais forte
+  e mais barato. Ferramenta: TwitchDownloaderCLI (tem `.exe` para Windows),
+  com chat-downloader como reserva.
+- **Claude é opcional:** sem `ANTHROPIC_API_KEY`, o score usa só chat + áudio +
+  heurísticas de texto (palavrões, risada, "MDS", gritos) e o report sai sem
+  títulos gerados. Com a chave, a Fase 3 liga sozinha.
+- **Windows:** caminhos com `pathlib`, ffmpeg via `winget`, filtro de legenda
+  do ffmpeg com escape de caminho do Windows (`C\:/...`), README com
+  instruções em PowerShell.
+- **Desenvolvimento e testes** acontecem num ambiente Linux na nuvem. Os
+  comandos específicos de Windows precisam ser validados por você na sua
+  máquina.

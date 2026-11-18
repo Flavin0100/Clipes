@@ -13,7 +13,7 @@ download:
   clip_video_height: 1080       # qualidade dos trechos escolhidos
 
 transcribe:
-  model: large-v3               # small / medium / large-v3 / large-v3-turbo
+  model: large-v3-turbo         # small / medium / large-v3 / large-v3-turbo
   language: pt
   device: auto                  # auto / cuda / cpu
   compute_type: auto            # auto / float16 / int8
@@ -21,14 +21,14 @@ transcribe:
 
 detect:
   weights:                      # somam 1.0 (são renormalizados se não somarem)
-    chat: 0.35
-    audio: 0.25
-    semantic: 0.40
+    chat: 0.45
+    audio: 0.30
+    semantic: 0.25        # ignorado sem ANTHROPIC_API_KEY
   chat:
     rolling_window_seconds: 300
     reaction_tokens: ["KEKW", "LUL", "OMEGALUL", "kkkk", "MDS", "?????", "PogChamp", "Pog", "monkaS", "LMAO"]
   semantic:
-    enabled: true
+    enabled: auto                     # auto = liga se houver ANTHROPIC_API_KEY
     model: claude-sonnet-5-5
     screening_model: claude-haiku-5-5   # triagem barata antes do modelo principal
     max_candidates: 30                  # só os N melhores candidatos vão para o Claude
