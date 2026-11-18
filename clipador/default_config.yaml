@@ -1,0 +1,87 @@
+# Configuração padrão do Clipador.
+# Para personalizar, copie este arquivo para ./config.yaml (na pasta onde você
+# roda o comando) e altere só o que quiser: o que faltar vem daqui.
+
+clips:
+  max_clips: 5
+  min_seconds: 20
+  max_seconds: 60
+  pre_roll_seconds: 3           # começa ~3 s antes da frase que puxa o momento
+  post_roll_seconds: 0.4        # folga depois da última palavra
+  min_gap_seconds: 10           # distância mínima entre cortes
+
+download:
+  cookies_from_browser: null    # ex.: "chrome", "firefox", "edge"
+  clip_video_height: 1080       # qualidade dos trechos escolhidos
+  section_padding_seconds: 6    # margem baixada antes/depois de cada trecho
+
+transcribe:
+  model: large-v3-turbo         # small / medium / large-v3 / large-v3-turbo
+  language: pt
+  device: auto                  # auto / cuda / cpu
+  compute_type: auto            # auto (float16 na GPU, int8 na CPU) / float16 / int8
+  vad_filter: true
+  # Em CPU, transcrever a live inteira é lento demais. Acima deste tamanho, só
+  # as janelas candidatas são transcritas. Com GPU, transcreve tudo.
+  full_transcript_max_minutes_cpu: 20
+
+detect:
+  weights:                      # renormalizados para somar 1 entre os sinais disponíveis
+    chat: 0.45
+    audio: 0.30
+    semantic: 0.25              # sem ANTHROPIC_API_KEY usa heurísticas de texto
+  candidates: 15                # quantos picos vão para transcrição/análise
+  smooth_seconds: 6
+  baseline_seconds: 300         # janela da média móvel (chat e áudio)
+  ignore_edges_seconds: 120     # ignora começo/fim da live (chat dando oi/tchau)
+  chat:
+    delay_seconds: 8            # o chat reage alguns segundos depois do momento
+    reaction_tokens: ["KEKW", "LUL", "LULW", "OMEGALUL", "kkkk", "KKKK", "MDS", "?????",
+                      "PogChamp", "Pog", "POGGERS", "monkaS", "LMAO", "HAHAHA", "Kappa",
+                      "pepeLaugh", "ICANT", "Sadge", "D:", "WTF", "caralho", "nossa"]
+  text:
+    # Reações fortes. Evite palavras comuns ("mano"), que aparecem o tempo todo.
+    reaction_words: ["kkk", "haha", "caralho", "porra", "mds", "meu deus", "puta", "pqp",
+                     "não acredito", "nao acredito", "que isso", "socorro", "slk", "ai meu deus",
+                     "impossível", "absurdo", "inacreditável", "acabou", "morri", "nossa senhora"]
+  semantic:
+    enabled: auto               # auto = liga se houver ANTHROPIC_API_KEY (Fase 3)
+    model: claude-sonnet-5-5
+    screening_model: claude-haiku-5-5
+
+layout:
+  width: 1080
+  height: 1920
+  fps: auto                     # auto (mantém a fonte, máx. 60) ou número
+  facecam:                      # Fase 2
+    mode: auto
+    manual_box: null
+    top_fraction: 0.33
+  no_facecam: center            # center / blur_background (smart_crop na Fase 2)
+
+captions:
+  font: Montserrat Black
+  font_file: assets/fonts/Montserrat-Black.ttf
+  size: 96
+  max_words: 3
+  max_chars: 16
+  primary_color: "#FFFFFF"
+  highlight_color: "#FFE600"
+  outline_color: "#000000"
+  outline: 7
+  shadow: 3
+  uppercase: true
+  position_y: 0.66              # altura do centro da legenda (fração da tela)
+  fixes:                        # correções aplicadas na transcrição (minúsculas)
+    "cá cá cá": "kkk"
+
+render:
+  video_codec: libx264
+  crf: 20
+  preset: medium
+  audio_lufs: -14
+  audio_true_peak: -1.0
+
+paths:
+  cache_dir: cache
+  output_dir: output

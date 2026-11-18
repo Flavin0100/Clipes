@@ -84,3 +84,35 @@ chave da Anthropic.**
 - **Desenvolvimento e testes** acontecem num ambiente Linux na nuvem. Os
   comandos específicos de Windows precisam ser validados por você na sua
   máquina.
+
+## Resultado da Fase 1 (MVP), teste real
+
+VOD da Twitch de 1h53 (alanzoka, 19,3 mil mensagens de chat), em CPU de 4 núcleos, sem GPU:
+
+| Etapa | Tempo |
+|---|---|
+| Áudio (só a faixa de áudio, ~115 MB) | ~15 s |
+| Chat (8 blocos em paralelo) | ~22 s (sequencial levava ~3 min) |
+| Picos de chat + áudio | ~1 s |
+| Transcrição de 15 janelas (29 min de áudio, large-v3-turbo int8) | ~8 min (3–5x tempo real) |
+| 5 trechos 1080p60 (só os segmentos necessários) + render | ~1 min por corte |
+
+Saída: 5 cortes 1080x1920 60 fps, áudio entre -13,7 e -14,3 LUFS.
+
+Decisões tomadas no caminho:
+- **Chat da Twitch direto pela API GQL** (sem TwitchDownloaderCLI): uma
+  dependência a menos no Windows.
+- **Trecho em alta via segmentos HLS**: os VODs da Twitch usam fMP4 e o ffmpeg
+  erra ao pular para o meio deles. O Clipador baixa só os segmentos de 10 s
+  necessários e confirma o alinhamento comparando o áudio (erro medido: 0,04 s).
+- **Começo e fim da live ignorados** (2 min): o chat dando "oi" e "tchau" virava
+  falso positivo.
+- **Heurística de texto relativa**: conta reações a mais perto do pico em relação
+  ao resto da janela, porque palavrão constante não indica momento especial.
+
+Limitações conhecidas (para as Fases 2 e 3):
+- O crop central corta a facecam (Fase 2).
+- O chat sozinho dá notas parecidas para todos os candidatos; o Claude (Fase 3)
+  deve ser o principal fator de desempate.
+- Trechos silenciados pela Twitch (segmentos `-muted`, por direitos autorais) não
+  são detectados nem avisados ainda.
