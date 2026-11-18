@@ -9,3 +9,7 @@ output/
 .pytest_cache/
 assets/fonts/*.ttf
 assets/fonts/*.otf
+
+# estado local de plugins
+.claude-flow/
+.swarm/
